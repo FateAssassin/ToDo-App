@@ -36,6 +36,20 @@ export default function ToDo(){
         localStorage.setItem('todos', JSON.stringify([]));
         setTodos([]);
     }
+
+    var edit = []
+    function toggleEdit(id){
+        if (!edit.includes(id)){
+            alert('it doesnt')
+            edit.push(id)
+        } else{
+            alert('it does')
+            const index = edit.indexOf(id);
+            console.log(index)
+            edit.slice(index, 1);
+        }
+        console.log(edit)
+    }
     
     return (
         <div className='h-screen flex justify-center items-center flex-shrink-0'>
@@ -49,10 +63,14 @@ export default function ToDo(){
 
                 {todos.map((item) =>{
                     return (
-                    <div key={item.id} className='flex justify-between bg-purple-100 p-2 m-2 rounded-xl'>
-                        <p className='text-3xl ml-3'>{item.todo}</p>
-                        <button className='bg-red-300 mr-3 rounded-xl text-3xl py-1 px-3 font-light active:bg-red-400 active:text-red-900 duration-75' onClick={(e) => deleteTodo(item)}>Delete</button>
-                    </div>
+                        <div key={item.id} className='flex justify-between bg-purple-100 p-2 m-2 rounded-xl'>
+                            <p className={`text-3xl py-1`}>{item.todo}</p>
+                            <input type="text" className={`p-1`}></input>
+                            <div>
+                                <button className="bg-blue-300 mr-3 rounded-xl text-3xl py-1 px-3 font-light active:bg-blue-400 active:text-blue-900 duration-75" onClick={(e) => toggleEdit(item.id)}>Edit</button>
+                                <button className='bg-red-300 mr-3 rounded-xl text-3xl py-1 px-3 font-light active:bg-red-400 active:text-red-900 duration-75' onClick={(e) => deleteTodo(item)}>Delete</button>
+                            </div>
+                        </div>
                     );
                 })}
 
