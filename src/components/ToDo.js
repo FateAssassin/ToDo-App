@@ -37,21 +37,36 @@ export default function ToDo(){
         setTodos([]);
     }
 
-    const [editMode, seteditMode] = useState([])
+    const [editMode, seteditMode] = useState()
     function toggleEdit(id){
-        if (editMode.includes(id)){
-            seteditMode(editMode.filter((i) => i !== id));
+        if (editMode === id){
+            seteditMode(null);
+            confirmEdit(id);
         } else {
-            seteditMode([...editMode, id]);
+            setEditValue('');
+            seteditMode(id);
         }
-        console.log(editMode);
     }
     
-    
+    const [editValue, setEditValue] = useState('');
+    function confirmEdit(item){
+        var todoItems = JSON.parse(localStorage.getItem("todos"));
+        if (editValue === '') return;
+        var newItems = todoItems.map((i) => {
+            if (i.id === item){
+                i.todo = editValue;
+            }
+            return i;
+        });
+        setTodos(newItems);
+        localStorage.setItem('todos', JSON.stringify(newItems));
+        setEditValue('');
+    }
+
     
     return (
         <div className='h-screen flex justify-center items-center flex-shrink-0'>
-            <div className='w-2/5'>
+            <div className='xl:w-3/5 md:w-4/5 lg:w-4/5 sm:w-full'>
                 <div className='border rounded-xl'>
                 <div className=' bg-purple-300 p-2 flex justify-center rounded-t-xl'>
                     <h1 className='text-3xl font-semibold'>ToDo-List</h1>
@@ -62,8 +77,8 @@ export default function ToDo(){
                 {todos.map((item) =>{
                     return (
                         <div key={item.id} className='flex justify-between bg-purple-100 p-2 m-2 rounded-xl'>
-                            <p className={`text-3xl py-1 ${editMode.includes(item.id) ? "hidden" : ""}`}>{item.todo}</p>
-                            <input type="text" className={`p-1 ${editMode.includes(item.id) ? "" : "hidden"}`}></input>
+                            <p className={`text-3xl py-1 ${editMode === item.id ? "hidden" : ""}`}>{item.todo}</p>
+                            <input type="text" className={`p-1 ${editMode === item.id ? "" : "hidden"}`} value={editValue} onChange={(e)=>setEditValue(e.target.value)} onKeyDown={(e) => e.key === "Enter" && toggleEdit(item.id) }></input>
                             <div>
                                 <button className="bg-blue-300 mr-3 rounded-xl text-3xl py-1 px-3 font-light active:bg-blue-400 active:text-blue-900 duration-75" onClick={(e) => toggleEdit(item.id)}>Edit</button>
                                 <button className='bg-red-300 mr-3 rounded-xl text-3xl py-1 px-3 font-light active:bg-red-400 active:text-red-900 duration-75' onClick={(e) => deleteTodo(item)}>Delete</button>
